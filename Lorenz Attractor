@@ -1,0 +1,145 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(r,t,R): #Lorenz equations
+    x = r[0]
+    y = r[1]
+    z = r[2]
+    fx = S*(y-x)
+    fy = R*x-y-x*z
+    fz = x*y - B*z
+    return np.array([fx,fy,fz], float)
+
+#parameters
+S =10
+R =28
+B = 8/3
+
+a = 0.0   #intial time point
+b = 50.0  #end time point
+h= 0.005  #step size
+
+tpoints = np.arange(a,b,h)  #time points
+xpoints = []  #list of x-coordinates
+ypoints = []  #list of y-coordinates
+zpoints = []  #list of z-coordinates
+
+# (xi,yi,zi) correspond to the initial point
+
+def rungekutta4(R,xi,yi,zi):      #the fourth runge-kutta method
+    r = np.array([xi,yi,zi],float)
+    for t in tpoints:
+        xpoints.append(r[0])
+        ypoints.append(r[1])
+        zpoints.append(r[2])
+        k1 = h*f(r,t,R)
+        k2 = h*f(r+0.5*k1, t+0.5*h,R)
+        k3 = h*f(r +0.5*k2, t+0.5*h,R)
+        k4 = h*f(r+k3, t+h,R)
+        r += (k1+2*k2+2*k3+k4)/6
+    return
+
+#FIGURE 1: 3D plot of the Lorenz Attractor
+rungekutta4(28,0,1,0)
+fig = plt.figure(figsize=(10,10))
+ax = fig.gca(projection='3d')
+ax.plot(xpoints, ypoints, zpoints, linewidth=1)
+ax.set_axis_off()
+plt.title('Figure 1')
+plt.show()
+
+
+
+#FIGURE 2
+rungekutta4(28,0,1,0)
+tindexed = [i for i in range(0, len(tpoints))]
+
+##Figure 2.a: Y for the first 2000 time-iterations
+plt.xlabel("t")
+plt.plot(tindexed[0:2000],ypoints[0:2000]) 
+plt.ylabel("y")
+plt.title('Figure 2.a')
+plt.show()
+
+#Figure 2.b: Y for the second 2000 time-iterations
+plt.xlabel("t")
+plt.plot(tindexed[2000:4000],ypoints[2000:4000], color='orange') #Figure 2.b
+plt.xlabel("t")
+plt.ylabel("y")
+plt.title('Figure 2.b')
+plt.show()
+
+#Figure 2.c: Y for the third 2000 time-iterations
+plt.xlabel("t")
+plt.plot(tindexed[4000:6000],ypoints[4000:6000], color='green') #Figure 2.c
+plt.xlabel("t")
+plt.ylabel("y")
+plt.title('Figure 2.c')
+plt.show()
+
+
+
+#FIGURE 3
+xpoints = []
+ypoints = []
+zpoints = []
+rungekutta4(24.21,0,1,0)
+
+#Figure 3.a: X-Y plot at R=24.21
+plt.plot(xpoints,ypoints)
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title('Figure 3.a')
+plt.show()
+
+#Figure 3.b: Y-t plt at R=24.21
+plt.plot(tindexed,ypoints, color='orange')
+plt.xlabel("t")
+plt.ylabel("y")
+plt.title('Figure 3.b')
+plt.show()
+
+xpoints = []
+ypoints = []
+zpoints = []
+rungekutta4(24.74,0,1,0)
+
+#Figure 3.c: X-Y plot at R=24.74
+plt.plot(xpoints,ypoints)
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title('Figure 3.c')
+plt.show()
+
+#Figure 3.d: Y-t plot at R=24.74
+plt.plot(tindexed,ypoints, color='orange')
+plt.xlabel("t")
+plt.ylabel("y")
+plt.title('Figure 3.d')
+plt.show()
+
+
+
+#FIGURE 4: X-Y plots at s=30, b =8/3, r=30 starting at two different initial conditions
+
+##first initial condition
+xpoints = []
+ypoints = []
+zpoints = []
+rungekutta4(30,0,1,0)
+
+plt.plot(xpoints,ypoints, label='init. cond.=(0,1,0)')
+
+##second initial condition
+xpoints = []
+ypoints = []
+zpoints = []
+rungekutta4(30,0,1,0.0000001)
+
+plt.plot(xpoints,ypoints, label='init. cond.=(0,1,0.0000001)')
+
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend(loc='upper left')
+plt.title('Figure 4')
+plt.show()
